@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.HospitalDao">
+	<insert id="resHpInsert" parameterType="com.dondog.dbapp.dto.HospitalDto" 
+   useGeneratedKeys="true" keyProperty="hp_num">
+      <selectKey keyProperty="hp_num" resultType="String" order="BEFORE">
+         SELECT HP_SEQ.NEXTVAL FROM DUAL
+      </selectKey>
+      INSERT INTO HP
+      VALUES(#{hp_num},#{p_pid,jdbcType=NVARCHAR},#{h_id},#{hp_in},DEFAULT,#{hp_contents,jdbcType=NVARCHAR},#{hp_date,jdbcType=DATE},#{hp_visit},#{hp_symp,jdbcType=NVARCHAR},DEFAULT,DEFAULT,#{m_id})
+   </insert>
+	
+	<select id="getHosInfo" parameterType="String" resultType="com.dondog.dbapp.dto.HospitalDto">
+		SELECT * FROM HOSPITAL WHERE HP_NUM=#{hp_num}
+	</select>
+	
+	<insert id="HPquestInsert" parameterType="com.dondog.dbapp.dto.ResPetsitterDto"
+		useGeneratedKeys="true" keyProperty="rsp_num">
+		<selectKey keyProperty="rsp_num" resultType="String"
+			order="BEFORE">
+			SELECT RPS_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO RPS(RSP_NUM,P_PID,M_ID,HP_NUM,CA_NUM,RSP_IN,RSP_OUT,RSP_ETC,RSP_STAT,RSP_CONTENTS,RSP_LIC,RSP_COND1,RSP_COND2,RSP_COND3,RSP_COND4,RSP_COND5,RSP_PICK,M_ID2) 
+		VALUES ('RPS'||TO_CHAR(SYSDATE ,'YYYYMMDD')||#{rsp_num},#{p_pid},#{m_id},#{hp_num  ,jdbcType=NVARCHAR},#{ca_num ,jdbcType=NVARCHAR},#{rsp_in},
+		#{rsp_out},#{rsp_etc},DEFAULT,#{rsp_contents},#{rsp_lic},#{rsp_cond1 ,jdbcType=NVARCHAR},
+		#{rsp_cond2 ,jdbcType=NVARCHAR},#{rsp_cond3 ,jdbcType=NVARCHAR},#{rsp_cond4 ,jdbcType=NVARCHAR},#{rsp_cond5 ,jdbcType=NVARCHAR} ,#{rsp_pick},#{m_id2 ,jdbcType=NVARCHAR})
+	</insert>
+
+</mapper>

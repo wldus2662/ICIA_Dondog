@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.HpChartDao">
+
+	<select id="gethosList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.HospitalDto">
+	 	SELECT * FROM HP WHERE H_ID=#{id}
+	</select>
+	
+	<!-- 외래키 예약 정보의 반려동물 아이디 p_pid -->
+	<insert id="hpChartInsert" parameterType="HashMap">
+		INSERT INTO FL(F_FNUM,P_PID,F_ORINAME,F_SYSNAME)
+			VALUES('hpChart_'||FILE_SEQ.NEXTVAL,#{p_pid},#{f_oriname},#{f_sysname})
+	</insert>
+	
+	<!-- 상세 내역 가져오기 -->
+	<select id="hpChartContents" parameterType="String"
+		resultType="com.dondog.dbapp.dto.HospitalDto">
+		SELECT * FROM HP WHERE HP_NUM=#{hp_num}
+	</select>
+	<!-- 해당 게시글에 업로드한 파일 목록 가져오기 -->
+	<select id="getfList" parameterType="String" resultType="com.dondog.dbapp.dto.FileDto">
+		SELECT * FROM FL WHERE P_PID=#{p_pid}
+	</select>
+	<!-- 업로드한 파일의 원래 이름 가져오기 -->
+	<select id="getOriName" parameterType="String" resultType="String">
+		SELECT F_ORINAME FROM FL WHERE F_SYSNAME=#{sysName}
+	</select>
+</mapper>

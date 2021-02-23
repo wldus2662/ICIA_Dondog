@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.mgCpListDao">
+
+	<!-- 업체 승인 대기 중인 내역 가져오기 -->
+	<select id="mgCApproList" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		SELECT * FROM HB WHERE BH_STAT=0
+	</select>
+	
+	<select id="mgCpLook" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		SELECT * FROM HB WHERE BH_NUM=#{bh_num}
+	</select>
+	
+	<!-- 업체 등록 승인(상태를 승인으로 업데이트) -->
+	<select id="mgCAppro" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		UPDATE HB SET BH_STAT=1 WHERE BH_NUM=#{bh_num}
+	</select>
+	
+	<!-- 업체 등록 거절(상태를 거절로 업데이트) -->
+	<select id="mgCAppro1" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		UPDATE HB SET BH_STAT=2 WHERE BH_NUM=#{bh_num}
+	</select>
+	
+	<!-- 업체 리스트 가져오는 쿼리-->
+	<select id="mgCpList" resultType="com.dondog.dbapp.dto.HostMemberDto">
+		SELECT * FROM HM WHERE H_LEVEL=0
+	</select>
+	
+	<!-- 업체 상세내역 가져오는 쿼리 -->
+	<select id="mgCpLook2" resultType="com.dondog.dbapp.dto.HostMemberDto">
+		SELECT * FROM HM WHERE H_ID=#{h_id}
+	</select>
+	
+	<!-- 업체 강제탈퇴 쿼리 -->	
+	<update id="mgCpDel" parameterType="String">
+		UPDATE HM SET H_LEVEL=9, H_GRADE='강제탈퇴' WHERE H_ID=#{h_id}
+	</update>
+	
+	<!-- 업체 등록내역 삭제  쿼리 -->
+	<update id="mgHbDel" parameterType="String">
+		UPDATE HB SET BH_STAT=9 WHERE BH_NUM=#{bh_num}
+	</update>
+	
+	<!-- 펫시터 신청 내역 가져오기 -->
+	<select id="mgPApproList" resultType="com.dondog.dbapp.dto.PetsitterFormDto">
+		SELECT * FROM PF WHERE UP_STAT=0
+	</select>
+	
+	<select id="mgPApproList2" resultType="com.dondog.dbapp.dto.PetsitterFormDto">
+		SELECT * FROM PF WHERE UP_NUM=#{up_num}
+	</select>
+	
+	<!-- 펫시터 신청 승인 -->
+	<update id="sittera" parameterType="String">
+		UPDATE PF SET UP_STAT=1 WHERE UP_NUM=#{up_num}
+	</update>
+	
+	<!-- 펫시터 신청 거절 -->
+	<update id="sitterd" parameterType="String">
+		UPDATE PF SET UP_STAT=2 WHERE UP_NUM=#{up_num}
+	</update>
+	
+	<!-- 펫시터 등급을 바꿔줄 멤버 가져오기 -->
+	<select id="sitterupList" resultType="com.dondog.dbapp.dto.MemberDto">
+		<![CDATA[SELECT * FROM MEMBER WHERE M_LEVEL=2 OR M_LEVEL=3]]>
+	</select>
+	
+	<!-- 펫시터 등급 바꿔줄 멤버 상세정보 가져오기 -->
+	<select id="sitterupList2" resultType="com.dondog.dbapp.dto.MemberDto">
+		SELECT * FROM MEMBER WHERE M_ID=#{m_id}
+	</select>
+	
+	<!-- 일반회원 -> 비전문가 펫시터로 등업 -->
+	<update id="Bsitterup" parameterType="String">
+		UPDATE MEMBER SET M_LEVEL=3, M_GRADE='비전문 펫시터' WHERE M_ID=#{m_id}
+	</update>
+	
+	<!-- 비전문가-> 전문 펫시터로 등업 -->
+	<update id="Asitterup" parameterType="String">
+		UPDATE MEMBER SET M_LEVEL=4, M_GRADE='전문 펫시터' WHERE M_ID=#{m_id}
+	</update>
+	
+</mapper>

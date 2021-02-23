@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.MyResNowDao">
+	<update id="hosCancle" parameterType="String">
+		UPDATE HP SET HP_SUC=2 WHERE HP_NUM=#{hp_num}
+	</update>
+
+	<select id="getContents" parameterType="String"
+		resultType="com.dondog.dbapp.dto.CareReservationDto">
+		SELECT * FROM CR WHERE CA_NUM=#{ca_num}
+	</select>
+
+	<update id="myCancle" parameterType="String">
+		UPDATE CR SET CA_SUC=2 WHERE CA_NUM=#{ca_num}
+	</update>
+
+</mapper>

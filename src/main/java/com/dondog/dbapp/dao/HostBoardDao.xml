@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.HostBoardDao">
+
+	<select id="getSCList" parameterType="Integer" 
+		resultType="com.dondog.dbapp.dto.BlackListDto">
+		<![CDATA[
+		SELECT * FROM SCLIST_1
+		WHERE RONUM>=#{pageNum}*10-9
+		AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	
+	<select id="gethBList" parameterType="Integer" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		<![CDATA[
+		SELECT * FROM HBLIST_1
+		WHERE RONUM>=#{pageNum}*10-9
+		AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	
+	<select id="getHBoardCnt" resultType="Integer">
+		SELECT COUNT(*) FROM HBLIST_1
+	</select>
+	
+	<select id="getSCBoardCnt" resultType="Integer">
+		SELECT COUNT(*) FROM SCLIST_1
+	</select>
+	
+	<insert id="hpRegformInsert" parameterType="com.dondog.dbapp.dto.HpRegformDto">
+	 		INSERT INTO HPR
+	 		VALUES(HPR_SEQ.NEXTVAL,#{hc_normal},#{hc_alltime},#{hc_parking},#{hc_beauty},#{hc_hotel}
+	 		,#{hc_supplies},#{hc_second},#{bh_num})
+	 </insert>
+	
+	<insert id="hBoardInsert" parameterType="com.dondog.dbapp.dto.HostBoardDto"
+		useGeneratedKeys="true" keyProperty="bh_num">
+		<selectKey keyProperty="bh_num" resultType="String" order="BEFORE">
+			SELECT HB_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO HB
+		VALUES(#{bh_num},#{h_id},#{bt_num,jdbcType=NVARCHAR}
+		,#{tc_num,jdbcType=NVARCHAR},#{s_num,jdbcType=NVARCHAR},DEFAULT,
+		#{bh_title},DEFAULT,DEFAULT,#{bh_contents},DEFAULT,DEFAULT)
+	</insert>
+	
+	<insert id="scBoardInsert" parameterType="com.dondog.dbapp.dto.BlackListDto" useGeneratedKeys="true" keyProperty="bl_num">
+		<selectKey keyProperty="bl_num" resultType="String" order="BEFORE">
+			SELECT BL_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO BL
+		VALUES('SC'||#{bl_num},#{m_id,jdbcType=NVARCHAR},#{h_id,jdbcType=NVARCHAR},#{bl_name,jdbcType=NVARCHAR},#{bl_contents},#{bl_title},DEFAULT)
+	</insert>
+	
+	<insert id="OneBoardInsert" parameterType="com.dondog.dbapp.dto.BlackListDto" useGeneratedKeys="true" keyProperty="bl_num">
+		<selectKey keyProperty="bl_num" resultType="String" order="BEFORE">
+			SELECT BL_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO BL
+		VALUES('ONE'||#{bl_num},#{m_id,jdbcType=NVARCHAR},#{h_id,jdbcType=NVARCHAR},#{bl_name,jdbcType=NVARCHAR},#{bl_contents},#{bl_title},DEFAULT)
+	</insert>
+		
+	<insert id="hfileInsert" parameterType="HashMap">
+		INSERT INTO UF VALUES(FILE_SEQ.NEXTVAL,#{bh_num},#{uf_oriname},#{uf_sysname})
+	 </insert>
+	 <insert id="hfileInsert2" parameterType="HashMap">
+		INSERT INTO FL VALUES(FILE_SEQ.NEXTVAL,#{b_num,jdbcType=NVARCHAR},#{rv_num,jdbcType=NVARCHAR},
+		#{f_oriname},#{f_sysname},#{p_pid,jdbcType=NVARCHAR},#{bh_num,jdbcType=NVARCHAR})
+	 </insert>
+	 <insert id="hfileInsert3" parameterType="HashMap">
+		INSERT INTO FL VALUES(FILE_SEQ.NEXTVAL,#{b_num,jdbcType=NVARCHAR},#{rv_num,jdbcType=NVARCHAR},
+		#{f_oriname},#{f_sysname},#{p_pid,jdbcType=NVARCHAR},#{bh_num,jdbcType=NVARCHAR})
+	 </insert>
+	 
+	 <select id="getHContnents" parameterType="String" resultType="com.dondog.dbapp.dto.HostBoardDto">
+	 	SELECT * FROM HB WHERE BH_NUM=#{bh_num}
+	 </select>
+	 
+	 <select id="getHfList" parameterType="String" resultType="com.dondog.dbapp.dto.FileDto">	 
+	 	SELECT * FROM FL WHERE BH_NUM=#{bh_num}
+	 </select>
+	 <select id="getUfList" parameterType="String" resultType="com.dondog.dbapp.dto.UpimgFileDto">
+	 	SELECT * FROM UF WHERE BH_NUM=#{bh_num}
+	 </select>
+	 
+	 <update id="HBupdate" parameterType="com.dondog.dbapp.dto.HostBoardDto">
+	 	UPDATE BH SET BH_TITLE=#{bh_title}, BH_CONTENTS=#{bH_contents} WHERE BH_NUM=#{bh_num}
+	 </update>
+	 
+	 <delete id="hFiledelete"  parameterType="String">
+		DELETE FROM FL WHERE BH_NUM=#{bh_num}
+	</delete>
+	
+	<delete id="HBdelete" parameterType="String">
+		DELETE FROM HB WHERE BH_NUM=#{bh_num}
+	</delete>
+	
+	 <!-- 업체등록 현황 불러오기 -->
+    <select id="gethostInfo" parameterType="String" resultType="com.dondog.dbapp.dto.HostBoardDto">
+    	SELECT * FROM HB WHERE H_ID=#{h_id} 
+		ORDER BY BH_DATE DESC
+    </select>
+    
+    <!-- 번호 불러오기 -->
+    <select id="getbh_num" resultType="String">
+	 	select max(bh_num) from HB 
+	 </select>
+	 
+	<!-- 업체등록하기 -->
+	<insert id="hostBoardInsert"
+		parameterType="com.dondog.dbapp.dto.HostBoardDto"
+		useGeneratedKeys="true" keyProperty="bh_num">
+		<selectKey keyProperty="bh_num" resultType="String"
+			order="BEFORE">
+			SELECT HB_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO HB(BH_NUM, H_ID, BH_TITLE, BH_CONTENTS)
+		VALUES (#{bh_num}, #{h_id}, #{bh_title}, #{bh_contents})
+	</insert>
+	
+	<!-- 서비스 등록하기 -->
+	<insert id="serviceInsert" parameterType="com.dondog.dbapp.dto.CompanySerciceDto" useGeneratedKeys="true" keyProperty="s_num">
+		<selectKey keyProperty="s_num" resultType="String" order="BEFORE">
+			SELECT CS_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO CS(S_NUM, S_PRICE, S_CONTENTS, S_STAT, S_CNUM)
+		VALUES (#{s_num},#{s_price},#{s_contents}, DEFAULT, #{s_cnum})
+	</insert>
+	
+	<!-- 등록리스트 상세내역 가져오기 -->
+  	<select id="gethostContents" parameterType="String" resultType="com.dondog.dbapp.dto.HostBoardDto">
+  		SELECT * FROM HB WHERE BH_NUM=#{bh_num}
+  	</select>
+  	
+  	 <!-- 등록양식 게시글삭제 -->
+    <delete id="regBoardDelete" parameterType="String">
+    	DELETE FROM HB WHERE BH_NUM=#{bh_num}
+    </delete>
+    
+    <!-- 2.18추가  -->
+    
+   <!-- 등록 파일 저장 메소드 -->
+	<insert id="hbfileInsert" parameterType="HashMap">
+		INSERT INTO FL
+		VALUES(FILE_SEQ.NEXTVAL,#{b_num,jdbcType=NVARCHAR},#{rv_num,jdbcType=NVARCHAR},
+		#{f_oriname},#{f_sysname},#{p_pid,jdbcType=NVARCHAR},#{bh_num,jdbcType=NVARCHAR})
+	</insert>
+	
+	<!-- 미용체크박스  -->
+	<insert id="btRegformInsert" parameterType="com.dondog.dbapp.dto.BtRegformDto">
+		INSERT INTO BTR
+		VALUES(BTR_SEQ.NEXTVAL,#{bt_visit,jdbcType=NVARCHAR},#{bt_pickup,jdbcType=NVARCHAR},#{bt_parking,jdbcType=NVARCHAR},
+			#{bt_supplies,jdbcType=NVARCHAR},#{bh_num,jdbcType=NVARCHAR})
+	</insert>
+	
+	<!-- 해당 게시글 파일 목록 가져오기 -->
+	<select id="gethbfList" parameterType="String" resultType="com.dondog.dbapp.dto.FileDto">
+		SELECT * FROM FILETBL WHERE BH_NUM=#{bh_num}
+	</select>
+	
+	<!--체크박스  불러오기 -->
+	<select id="getBtregForm" parameterType="String" resultType="com.dondog.dbapp.dto.BtRegformDto">
+		SELECT * FROM BTR WHERE BH_NUM=#{bh_num}
+	</select>
+	
+	<!-- 체크박스 삭제하기 -->
+	<delete id="btregDelete">
+		DELETE FROM BTR WHERE BH_NUM=#{bh_num}
+	</delete>
+	
+	<!-- 등록된 미용업체들 불러오기(미용검색창에서) -->
+	<select id="beautyList" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		SELECT * FROM HB
+		ORDER BY BH_DATE DESC 
+	</select>
+	
+	<!-- 등록된 업체게시글 총갯수 구하기 -->
+	<select id="btCounte" resultType="int">
+ 		SELECT COUNT(*) FROM HB
+	</select>
+
+</mapper>

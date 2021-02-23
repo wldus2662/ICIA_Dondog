@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.BoardDao">
+
+	<insert id="boardInsert"
+		parameterType="com.dondog.dbapp.dto.CommuntyDto"
+		useGeneratedKeys="true" keyProperty="b_num">
+		<selectKey keyProperty="b_num" resultType="String"
+			order="BEFORE">
+			SELECT COMM_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO COMM(B_NUM, M_ID, B_TITLE, B_VIEW, B_RECOM, B_CONTENTS, B_HEAD)
+		VALUES (#{b_num},#{m_id},#{b_title}, DEFAULT, DEFAULT, #{b_contents}, DEFAULT)
+	</insert>
+		
+	<!-- 반환이 List일 경우 한 항목에 대한 type을 지정  -->
+	<select id="getList" parameterType="Integer" resultType="com.dondog.dbapp.dto.CommuntyDto">
+		<![CDATA[
+		SELECT * FROM CLIST_1 WHERE RONUM>=#{pageNum}*10-9 AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	<select id="getHlist" parameterType="Integer" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		<![CDATA[
+		SELECT * FROM HLIST_1 WHERE RONUM>=#{pageNum}*10-9 AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	<select id="getBlist" parameterType="Integer" resultType="com.dondog.dbapp.dto.CommuntyDto">
+		<![CDATA[
+		SELECT * FROM BLIST_1 WHERE RONUM>=#{pageNum}*10-9 AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	<select id="getRlist" parameterType="Integer" resultType="com.dondog.dbapp.dto.HostBoardDto">
+		<![CDATA[
+		SELECT * FROM RLIST_1 WHERE RONUM>=#{pageNum}*10-9 AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	<select id="getDlist" parameterType="HashMap" resultType="com.dondog.dbapp.dto.CommuntyDto">
+		<![CDATA[
+		SELECT D.* FROM 
+		(SELECT ROWNUM AS RONUM, B_NUM, B_DATE, B_TITLE, B_VIEW, B_RECOM, B_CONTENTS, B_HEAD, M_ID FROM DLIST 
+		where B_HEAD=#{head}) D WHERE D.RONUM>=#{pageNum}*10-9 AND D.RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	
+	<select id="getBoardCnt" resultType="Integer">
+		SELECT COUNT(*) FROM CLIST_1
+	</select>
+	
+	 <select id="getContents" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CommuntyDto">
+	 	SELECT * FROM CLIST_1 WHERE B_NUM=#{b_num}
+	 </select>
+	 
+	  <insert id="fileInsert" parameterType="HashMap">
+	 	INSERT INTO FL(F_FNUM, B_NUM, F_ORINAME, F_SYSNAME) VALUES (FILE_SEQ.NEXTVAL, #{b_num}, #{f_oriName}, #{f_sysName})
+	 </insert>
+	 
+	  <select id="getBfList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.FileDto">
+	 	SELECT * FROM FL WHERE B_NUM=#{b_num}
+	 </select>
+	 
+	 <select id="getService" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CompanySerciceDto">
+	 	SELECT * FROM CS WHERE S_CNUM=#{s_cnum}
+	 </select>
+	 
+	 <update id="viewUpdate" parameterType="String">
+	 	UPDATE COMM SET B_VIEW=B_VIEW+1
+		WHERE B_NUM=#{b_num}
+	 </update>
+	 
+	 <insert id="replyInsert" 
+	 	parameterType="com.dondog.dbapp.dto.ReplyDto">
+	 	INSERT INTO RP(R_RNUM, B_NUM, R_CONTENTS, R_NAME, R_DATE, R_RECOM) 
+	 	VALUES (RP_SEQ.NEXTVAL, #{b_num}, #{r_contents}, #{r_name}, DEFAULT, DEFAULT)
+	 </insert>
+	 
+	 <select id="getReplyList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.ReplyDto">
+	 	SELECT * FROM RP WHERE B_NUM=#{b_num}
+	 </select>
+	 
+	  <select id="getOriName" parameterType="String"
+	 	resultType="String">
+	 	SELECT F_ORINAME FROM FL WHERE F_SYSNAME=#{f_sysName}
+	 </select>
+	 
+	 <update id="boardUpdate" parameterType="com.dondog.dbapp.dto.CommuntyDto">
+	 	UPDATE COMM SET B_TITLE=#{b_title}, B_CONTENTS=#{b_contents}
+	 	WHERE B_NUM=#{b_num}
+	 </update>
+	 
+	 <delete id="fileDelete" parameterType="String">
+	 	DELETE FROM FL
+	 	WHERE F_SYSNAME=#{f_sysname}
+	 </delete>
+	 
+	 <delete id="replyDelete" parameterType="String">
+	 	DELETE FROM RP
+	 	WHERE B_NUM=#{b_num}
+	 </delete>
+	 
+	  <delete id="filesListDelete" parameterType="String">
+	 	DELETE FROM FL
+	 	WHERE B_NUM=#{b_num}
+	 </delete>
+	 
+	 <delete id="boardDelete" parameterType="String">
+	 	DELETE FROM COMM
+	 	WHERE B_NUM=#{b_num}
+	 </delete>
+	 
+	 <insert id="htReg" parameterType="com.dondog.dbapp.dto.HostBoardDto" useGeneratedKeys="true" keyProperty="bh_num">
+		<selectKey keyProperty="bh_num" resultType="String" order="BEFORE">
+			SELECT HB_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO HB(BH_NUM, H_ID, BH_TITLE, BH_CONTENTS)
+		VALUES (#{bh_num}, #{h_id}, #{bh_title}, #{bh_contents})
+	</insert>
+	
+	<select id="getCompCnt" resultType="Integer">
+		SELECT COUNT(*) FROM HLIST_1
+	</select>
+	 <update id="likeUpdate" parameterType="String">
+	 	UPDATE COMM SET B_RECOM = B_RECOM+1
+		WHERE B_NUM=#{b_num}
+	 </update>
+	  <insert id="serviceInsert" parameterType="com.dondog.dbapp.dto.CompanySerciceDto" useGeneratedKeys="true" keyProperty="s_num">
+		<selectKey keyProperty="s_num" resultType="String" order="BEFORE">
+			SELECT CS_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO CS(S_NUM, S_PRICE, S_CONTENTS, S_STAT, S_CNUM)
+		VALUES (#{s_num},#{s_price},#{s_contents}, DEFAULT, #{s_cnum})
+	</insert>
+	 
+	 <update id="viewUpdate2" parameterType="String">
+	 	UPDATE HB SET BH_VIEW=BH_VIEW+1
+		WHERE BH_NUM=#{bh_num}
+	 </update>
+	 <select id="getCfList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.FileDto">
+	 	SELECT * FROM FL WHERE BH_NUM=#{bh_num}
+	 </select>
+	 <insert id="fileInsert2" parameterType="HashMap">
+	 	INSERT INTO FL(F_FNUM, BH_NUM, F_ORINAME, F_SYSNAME) VALUES (FILE_SEQ.NEXTVAL, #{bh_num}, #{f_oriName}, #{f_sysName})
+	 </insert>
+	 
+	  <select id="getHeadCount" parameterType="Integer" resultType="Integer">
+	 	SELECT COUNT(*) FROM DLIST WHERE B_HEAD=#{head}
+	 </select>
+	 
+	 <select id="getvList" parameterType="Integer" resultType="com.dondog.dbapp.dto.ReviewDto">
+		<![CDATA[
+		SELECT * FROM VLIST_1 WHERE RONUM>=#{pageNum}*10-9 AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	
+	<insert id="reviewInsert"
+		parameterType="com.dondog.dbapp.dto.ReviewDto"
+		useGeneratedKeys="true" keyProperty="rv_num">
+		<selectKey keyProperty="rv_num" resultType="String"
+			order="BEFORE">
+			SELECT RV_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO RV(RV_NUM, RV_NAME, S_NUM, RV_RECOM, RV_CONTENTS, H_ID)
+		VALUES (#{rv_num},#{rv_name}, #{s_num}, DEFAULT, #{rv_contents}, #{h_id})
+	</insert>
+	
+	<insert id="fileInsert3" parameterType="HashMap">
+	 	INSERT INTO FL(F_FNUM, RV_NUM, F_ORINAME, F_SYSNAME) VALUES (FILE_SEQ.NEXTVAL, #{rv_num}, #{f_oriname}, #{f_sysname})
+	 </insert>
+	 
+	 <select id="getrvContents" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.ReviewDto">
+	 	SELECT * FROM VLIST_1 WHERE RV_NUM=#{rv_num}
+	 </select>
+	 
+	 <select id="getRfList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.FileDto">
+	 	SELECT * FROM FL WHERE RV_NUM=#{rv_num}
+	 </select>
+	 
+	 <select id="getrvReplyList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.ReplyDto">
+	 	SELECT * FROM RP WHERE RV_NUM=#{rv_num}
+	 </select>
+	 
+	 <insert id="replyInsert2" 
+	 	parameterType="com.dondog.dbapp.dto.ReplyDto">
+	 	INSERT INTO RP(R_RNUM, RV_NUM, R_CONTENTS, R_NAME, R_DATE, R_RECOM) 
+	 	VALUES (RP_SEQ.NEXTVAL, #{rv_num}, #{r_contents}, #{r_name}, DEFAULT, DEFAULT)
+	 </insert>
+	 
+	 <select id="getReplyList2" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.ReplyDto">
+	 	SELECT * FROM RP WHERE RV_NUM=#{rv_num}
+	 </select>
+	 
+	 <update id="reviewUpdate" parameterType="com.dondog.dbapp.dto.ReviewDto">
+	 	UPDATE RV SET S_NUM=#{s_num}, RV_CONTENTS=#{rv_contents}, H_ID=#{h_id}
+	 	WHERE RV_NUM=#{rv_num}
+	 </update>
+	 
+	  <delete id="replyDelete2" parameterType="String">
+	 	DELETE FROM RP
+	 	WHERE RV_NUM=#{rv_num}
+	 </delete>
+	 
+	  <delete id="filesListDelete2" parameterType="String">
+	 	DELETE FROM FL
+	 	WHERE RV_NUM=#{rv_num}
+	 </delete>
+	 
+	  <delete id="reviewDelete" parameterType="String">
+	 	DELETE FROM RV
+	 	WHERE RV_NUM=#{rv_num}
+	 </delete>
+	 
+	 <delete id="fileDelete2" parameterType="String">
+	 	DELETE FROM FL
+	 	WHERE F_SYSNAME=#{f_sysname}
+	 </delete>
+	
+</mapper>

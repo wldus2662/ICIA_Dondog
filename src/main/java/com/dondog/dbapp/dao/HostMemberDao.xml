@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.HostMemberDao">
+
+	<insert id="hostInsert" parameterType="com.dondog.dbapp.dto.HostMemberDto">
+		INSERT INTO HM
+		VALUES(#{h_id},#{h_pass},#{h_addr},#{h_phone},#{h_email},#{h_busin},
+			#{h_conum},DEFAULT,#{h_kind},DEFAULT,DEFAULT)	
+	</insert>
+	
+	<select id="hidCheck" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) FROM HM WHERE H_ID=#{hid}
+	</select>
+	
+	<select id="hbusinCheck" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) FROM HM WHERE H_BUSIN=#{h_busin}
+	</select>
+	<update id="HMInfoUpdate" parameterType="com.dondog.dbapp.dto.HostMemberDto">
+		UPDATE HM SET H_BUSIN=#{h_busin},H_CONUM=#{h_conum},H_EMAIL=#{h_email},H_ADDR=#{h_addr},H_PHONE=#{h_phone}  
+		WHERE H_ID=#{h_id}
+	</update>	
+	<select id="hemailCheck" parameterType="String"	resultType="Integer">
+		SELECT COUNT(*) FROM HM WHERE H_EMAIL=#{h_email}
+	</select>
+	
+	<select id="getEncHPass" parameterType="String" resultType="String">
+		SELECT H_PASS FROM HM WHERE H_ID=#{hid}
+	</select>
+	
+	<select id="getHostInfo" parameterType="String" resultType="com.dondog.dbapp.dto.HostMemberDto">
+		SELECT * FROM HM WHERE H_ID=#{hid}
+	</select>
+
+</mapper>

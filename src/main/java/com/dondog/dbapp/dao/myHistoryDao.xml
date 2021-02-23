@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.myHistoryDao">
+	
+	<!-- 병원 이용내역 목록구하기 (간단히) -->
+	<select id="gethosInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.HospitalDto">
+	 	SELECT * FROM HP WHERE M_ID=#{id}
+	 </select>
+
+	<!-- 미용, 훈련소, 숙소 이용내역 목록구하기 (간단히) -->
+	<select id="getCareInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CareReservationDto">
+	 	SELECT * FROM CR WHERE M_ID=#{id} 	
+	 </select>
+	 
+	 <!-- 펫시터 이용내역 목록구하기 (간단히) -->
+	 <select id="getsitterInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.ResPetsitterDto">
+	 	SELECT * FROM RPS WHERE M_ID=#{id}
+	 </select>
+
+	<!-- 펫시터 이용 상세내역 구하기 -->
+	<select id="gethosInfo1" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.HospitalDto">
+	 	SELECT * FROM HP WHERE M_ID=#{id}
+	 </select>
+	 
+	<!-- 미용 이용 상세내역 구하기 -->
+	<select id="getbtInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CareReservationDto">
+	 	SELECT * FROM CR WHERE M_ID=#{id} 
+	 </select>
+	 
+	 <!-- 훈련소 이용 상세내역 구하기 -->
+	 <select id="getscInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CareReservationDto">
+	 	SELECT * FROM CR WHERE M_ID=#{id} 	
+	 </select>
+	 
+	 <!-- 숙소 이용 상세내역 구하기 -->
+	 <select id="gethtLInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CareReservationDto">
+	 	SELECT * FROM CR WHERE M_ID=#{id} 	
+	 </select>
+	
+	<select id="getsitterInfo1" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.ResPetsitterDto">
+	 	SELECT * FROM RPS WHERE M_ID=#{id}
+	 </select>
+	 
+	<!-- 게시글 목록 구하기 -->
+	 <select id="getCmList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CommuntyDto">
+	 	SELECT * FROM COMM WHERE M_ID=#{id}
+	 </select>
+	 
+	<!-- 원래 파일 이름 구하기 --> 
+	 <select id="getOriName" parameterType="String"
+	 	resultType="String">
+	 	SELECT F_ORINAME FROM FL WHERE F_SYSNAME=#{sysName}
+	 </select>
+	 
+	 <!-- 회원 리스트 구하기 -->
+	 <select id="mgMemberList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.MemberDto">
+	 	 <![CDATA[SELECT * FROM M WHERE M_LEVEL=4 OR M_LEVEL=2 OR M_LEVEL=3]]>
+	 </select>
+	 
+	 <!-- 블랙리스트 목록 구하기 -->
+	  <select id="mgBlackList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.BlackListDto">
+	 	SELECT * FROM BL WHERE M_ID=#{id}	
+	 </select>
+	 
+	 <!-- 찜목록 구하기 -->
+	 <select id="myLikeList" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.LikeListDto">
+	 	SELECT * FROM LL WHERE M_ID=#{id}	
+	 </select>
+	 
+	 <!-- 업체 정보 구하기 -->
+	 <select id="myLiCon" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.HostBoardDto">
+	 	SELECT * FROM HB WHERE BH_NUM=#{bh_num}	
+	 </select>
+	 
+	 <!-- 병원 이용 상세내역 구하기 -->
+	 <select id="hpContents" parameterType="String"
+		resultType="com.dondog.dbapp.dto.HospitalDto">
+		SELECT * FROM HP WHERE HP_NUM=#{hp_num}
+	</select>
+	 
+	 <!-- 해당 게시글에 업로드한 파일 목록 가져오기 -->
+	<select id="getfList" parameterType="String" resultType="com.dondog.dbapp.dto.FileDto">
+		SELECT * FROM FL WHERE P_PID=#{p_pid}
+	</select>
+	 
+	  <select id="getBfList" parameterType="Integer"
+	 	resultType="com.dondog.dbapp.dto.FileDto">
+	 	SELECT * FROM FL WHERE B_NUM=#{b_num}
+	 </select>
+	 
+</mapper>

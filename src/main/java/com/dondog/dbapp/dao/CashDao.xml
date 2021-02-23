@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.CashDao">
+<!-- 반환이 List일 경우 한 항목에 대한 type을 지정  -->
+	<select id="getcList" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.CashDto">
+		SELECT C_NUM,RSP_NUM,CA_NUM,C_CONTENTS,C_MONEY,C_STAT,C_DATE FROM CASH  
+		WHERE M_ID=#{m_id} ORDER BY C_DATE DESC
+	</select>
+	
+	<select id="cashContents" parameterType="String"
+	 resultType="com.dondog.dbapp.dto.CashDto">
+		SELECT * FROM CASH WHERE C_NUM=#{c_num}
+	</select>
+	
+	<update id="statUpdate" parameterType="String">
+		UPDATE CASH SET C_STAT=3 WHERE C_NUM=#{c_num}
+	</update>
+	
+	<select id="cashAll" resultType="com.dondog.dbapp.dto.CashDto">
+		SELECT * FROM CASH WHERE C_STAT=0
+	</select>
+	
+	<update id="statSuccess" parameterType="String">
+		UPDATE CASH SET C_STAT=1 WHERE C_NUM=#{c_num}
+	</update>
+</mapper>

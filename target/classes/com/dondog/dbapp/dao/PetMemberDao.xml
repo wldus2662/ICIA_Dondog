@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.PetMemberDao">
+	<insert id="petInsert" 
+		parameterType="com.dondog.dbapp.dto.PetDto" useGeneratedKeys="true"
+		keyProperty="p_pid">
+		<selectKey keyProperty="p_pid" resultType="String"
+			order="BEFORE">
+			SELECT 'PETID_'||PET_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO PET 
+		VALUES (#{p_pid},#{m_id},DEFAULT,#{p_name},#{p_kind},#{p_kindt},#{p_age},#{p_gender},#{p_pnum},#{p_size})
+	</insert>
+	<!-- 외래키 반려동물 정보의 아이디 p_pid -->
+	<insert id="petfileInsert" parameterType="HashMap">
+		INSERT INTO FL(F_FNUM,P_PID,F_ORINAME,F_SYSNAME)
+			VALUES('PETIMG_'||FILE_SEQ.NEXTVAL,#{p_pid},#{f_oriname},#{f_sysname})
+	</insert>
+	<!-- 반려동물 정보 가져오기 -->
+	<select id="getPetInfo" parameterType="String"
+		resultType="com.dondog.dbapp.dto.PetDto">
+		SELECT * FROM PET WHERE P_PID=#{id}
+	</select>
+	<!-- 해당 게시글에 업로드한 파일 목록 가져오기 -->
+	<select id="getpfList" parameterType="String" resultType="com.dondog.dbapp.dto.FileDto">
+		SELECT * FROM FL WHERE P_PID=#{p_pid}
+	</select>
+	<!-- 업로드한 파일의 원래 이름 가져오기 -->
+	<select id="getOriName" parameterType="String" resultType="String">
+		SELECT F_ORINAME FROM FL WHERE F_SYSNAME=#{sysName}
+	</select>
+	
+	<!-- 반려동물 정보 수정 쿼리 -->
+	<update id="petInfoUpdate" parameterType="com.dondog.dbapp.dto.PetDto">
+		UPDATE PET SET P_KINDT=#{p_kindt},P_AGE=#{p_age},
+		P_GENDER=#{p_gender},P_PNUM=#{p_pnum},P_SIZE=#{p_size} 
+		WHERE P_PID=#{p_pid}
+	</update>
+	
+	<!-- 개별 파일 삭제 쿼리(수정 시) -->
+	<delete id="fileDelete" parameterType="String">
+		DELETE FROM FL WHERE F_SYSNAME=#{sysName}
+	</delete>
+	
+	<!-- 반려동물 정보 목록 가져오기 -->
+	<select id="getPetList" parameterType="String" resultType="com.dondog.dbapp.dto.PetDto">
+		SELECT * FROM PET WHERE M_ID=#{id}
+	</select>
+</mapper>

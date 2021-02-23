@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.HostRegDao">
+	<!-- 업체 등록 리스트 가져오기 -->
+	<select id="gethInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.HostBoardDto">
+	 	SELECT * FROM HB WHERE H_ID=#{id}
+	</select>
+	<!-- 상세 내역 가져오기 -->
+	<select id="hContents" parameterType="String"
+		resultType="com.dondog.dbapp.dto.HostBoardDto">
+		SELECT * FROM HB WHERE H_ID=#{id}
+	</select>
+	<!-- 해당 게시글에 업로드한 파일 목록 가져오기 -->
+	<select id="getbhfList" parameterType="String" resultType="com.dondog.dbapp.dto.FileDto">
+		SELECT * FROM FL WHERE BH_NUM=#{bh_num}
+	</select>
+	<!-- 업로드한 파일의 원래 이름 가져오기 -->
+	<select id="getOriName" parameterType="String" resultType="String">
+		SELECT F_ORINAME FROM FL WHERE F_SYSNAME=#{sysName}
+	</select>
+	<!-- 내 업체 정보 수정 쿼리 -->
+	<update id="hostInfoUpdate" parameterType="com.dondog.dbapp.dto.HostBoardDto">
+		UPDATE HB SET BH_TITLE=#{bh_title}, BH_CONTENTS=#{bh_contents} 
+		WHERE H_ID=#{h_id}
+	</update>
+	<!-- 수정 시 업체소개파일 업로드 -->
+	<insert id="hostfileInsert" parameterType="HashMap">
+		INSERT INTO FL(F_FNUM,BH_NUM,F_ORINAME,F_SYSNAME) 
+			VALUES('HOST_'||FILE_SEQ.NEXTVAL,#{bh_num},#{f_oriname},#{f_sysname})
+	</insert>
+	
+	<!-- 개별 파일 삭제 쿼리(수정 시) -->
+	<delete id="fileDelete" parameterType="String">
+		DELETE FROM FL WHERE F_SYSNAME=#{sysName}
+	</delete>
+</mapper>

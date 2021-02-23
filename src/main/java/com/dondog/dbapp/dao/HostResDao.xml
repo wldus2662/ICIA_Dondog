@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.HostResDao">
+	<select id="gethosInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.HospitalDto">
+	 	SELECT * FROM HP WHERE H_ID=#{id}
+	 </select>
+
+	<select id="getCareInfo" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.CareReservationDto">
+	 	SELECT * FROM CR WHERE H_ID=#{id} 	
+	 </select>
+	
+	<update id="hosSuccess" parameterType="String">
+		UPDATE HP SET HP_SUC=1 WHERE HP_NUM=#{hp_num}
+	</update>
+	
+	<update id="careSuccess" parameterType="String">
+		UPDATE CR SET CA_SUC=1 WHERE CA_NUM=#{ca_num}
+	</update>
+
+	<!-- 병원 취소 사유 등록하기  -->
+	<update id="hosCanReason" parameterType="com.dondog.dbapp.dto.HospitalDto">
+		UPDATE HP SET HP_CAN=#{hp_can} 
+		WHERE HP_NUM=#{hp_num}
+	</update>
+	
+	<!-- 미용, 훈련소, 숙소 취소 사유 등록하기  -->
+	<update id="careCanReason" parameterType="com.dondog.dbapp.dto.CareReservationDto">
+		UPDATE CR SET CA_CAN=#{ca_can} 
+		WHERE CA_NUM=#{ca_num}
+	</update>
+
+</mapper>

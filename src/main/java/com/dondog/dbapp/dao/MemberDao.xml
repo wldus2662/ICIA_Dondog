@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.MemberDao">
+	
+	<insert id="memberInsert" 
+		parameterType="com.dondog.dbapp.dto.MemberDto">
+		INSERT INTO M
+		VALUES (#{m_id},#{m_pass},#{m_name},#{m_birth},
+				#{m_addr},#{m_phone},#{m_email},DEFAULT,DEFAULT,DEFAULT,DEFAULT,DEFAULT,#{m_name2})
+	</insert>
+	
+	<select id="getEncPwd" parameterType="String" 
+		resultType="String">
+		SELECT M_PASS FROM M WHERE M_ID=#{id}
+	</select>
+	
+	<select id="getMemberInfo" parameterType="String"
+		resultType="com.dondog.dbapp.dto.MemberDto">
+		SELECT * FROM MEMBER WHERE M_ID=#{id}
+	</select>
+	<select id="idCheck" parameterType="String"
+		resultType="Integer">
+		SELECT COUNT(*) FROM M WHERE M_ID=#{id}
+	</select>
+	
+	<select id="name2Check" parameterType="String"
+		resultType="Integer">
+		SELECT COUNT(*) FROM M WHERE M_NAME2=#{name2}
+	</select>
+	
+	<select id="emailCheck" parameterType="String"
+		resultType="Integer">
+		SELECT COUNT(*) FROM M WHERE M_EMAIL=#{email}
+	</select>
+	
+	<!-- 기본 정보 수정 쿼리 -->
+	<update id="myInfoUpdate" parameterType="com.dondog.dbapp.dto.MemberDto">
+		UPDATE M SET M_NAME2=#{m_name2},M_EMAIL=#{m_email},M_ADDR=#{m_addr},M_PHONE=#{m_phone}  
+		WHERE M_ID=#{m_id}
+	</update>
+	
+	<!-- 회원 강제탈퇴 쿼리 -->	
+	<update id="blackdel" parameterType="String">
+		UPDATE M SET M_LEVEL=9 WHERE M_ID=#{m_id}
+	</update>
+	
+	<!-- 관리자로 승인 쿼리 -->	
+	<update id="mgSignup" parameterType="String">
+		UPDATE M SET M_LEVEL=1, M_GRADE='관리자' WHERE M_ID=#{m_id}
+	</update>
+	
+	<!-- 회원 탈퇴 쿼리 0201 -->
+	<update id="myQuit" parameterType="com.dondog.dbapp.dto.MemberDto">
+		UPDATE M SET M_LEVEL=8 WHERE M_ID=#{m_id}
+	</update>
+</mapper>
+
+
+
+

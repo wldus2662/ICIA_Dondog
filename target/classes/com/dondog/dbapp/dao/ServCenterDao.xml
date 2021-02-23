@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.ServCenterDao">
+
+	<select id="getSCList" parameterType="Integer" 
+		resultType="com.dondog.dbapp.dto.BlackListDto">
+		<![CDATA[
+		SELECT * FROM COMPLIST_1
+		WHERE RONUM>=#{pageNum}*10-9
+		AND RONUM<=#{pageNum}*10
+		]]>
+	</select>
+	
+	<select id="getSCBoardCnt" resultType="Integer">
+		SELECT COUNT(*) FROM COMPLIST_1
+	</select>
+	
+	<insert id="scBoardInsert" parameterType="com.dondog.dbapp.dto.BlackListDto" useGeneratedKeys="true" keyProperty="bl_num">
+		<selectKey keyProperty="bl_num" resultType="String" order="BEFORE">
+			SELECT BL_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO BL(BL_NUM,M_ID,BL_NAME,BL_CONTENTS,BL_TITLE,BL_DATE)
+		VALUES('SC'||#{bl_num},#{m_id,jdbcType=NVARCHAR},#{bl_name,jdbcType=NVARCHAR},#{bl_contents},#{bl_title},DEFAULT)
+	</insert>
+	
+	<insert id="OneBoardInsert" parameterType="com.dondog.dbapp.dto.BlackListDto" useGeneratedKeys="true" keyProperty="bl_num">
+		<selectKey keyProperty="bl_num" resultType="String" order="BEFORE">
+			SELECT BL_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO BL
+		VALUES('ONE'||#{bl_num},#{m_id,jdbcType=NVARCHAR},#{h_id,jdbcType=NVARCHAR},#{bl_name,jdbcType=NVARCHAR},#{bl_contents},#{bl_title},DEFAULT)
+	</insert>
+	<!-- //////////////// -->
+	<select id="getscComp" parameterType="String" resultType="com.dondog.dbapp.dto.BlackListDto">
+		SELECT * FROM COMPLIST_1 WHERE BL_NUM=#{bl_num}
+	</select>
+	<update id="scCompUpdate" parameterType="com.dondog.dbapp.dto.BlackListDto">
+		UPDATE BL SET BL_TITLE=#{bl_title}, BL_CONTENTS=#{bl_contents} WHERE BL_NUM=#{bl_num}
+	</update>
+	<delete id="scCompDelete" parameterType="String">
+	 	DELETE FROM BL WHERE BL_NUM=#{bl_num}
+	 </delete>
+	 <select id="getScReplyList" parameterType="String" resultType="com.dondog.dbapp.dto.ReplyDto">
+	 	SELECT * FROM SCRLIST WHERE BL_NUM=#{bl_num}
+	 </select>
+	 <insert id="ScReplyInsert" parameterType="com.dondog.dbapp.dto.ReplyDto">
+	 	INSERT INTO RP (R_RNUM,BL_NUM,R_CONTENTS,R_NAME,R_DATE)
+	 	VALUES (RP_SEQ.NEXTVAL,#{bl_num},#{r_contents},#{r_name},DEFAULT)
+	 </insert>
+
+</mapper>

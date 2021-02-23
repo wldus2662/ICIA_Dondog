@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dondog.dbapp.dao.PetsitterDao">
+	
+	<insert id="petsitter_quest_Insert" 
+		parameterType="com.dondog.dbapp.dto.ResPetsitterDto"
+		useGeneratedKeys="true" keyProperty="rsp_num">
+		<selectKey keyProperty="rsp_num" resultType="String"
+			order="BEFORE">
+			SELECT RPS_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO RPS(RSP_NUM,P_PID,M_ID,HP_NUM,CA_NUM,RSP_IN,RSP_OUT,RSP_ETC,RSP_STAT,RSP_CONTENTS,
+		RSP_LIC,RSP_COND1,RSP_COND2,RSP_COND3,RSP_COND4,RSP_COND5,RSP_PICK,M_ID2)
+		VALUES ('RPS'||TO_CHAR(SYSDATE ,'YYYYMMDD')||#{rsp_num},#{p_pid},#{m_id},#{hp_num  ,jdbcType=NVARCHAR},
+		#{ca_num ,jdbcType=NVARCHAR},#{rsp_in},	#{rsp_out},#{rsp_etc},DEFAULT,
+		#{rsp_contents},#{rsp_lic},#{rsp_cond1 ,jdbcType=NVARCHAR},	#{rsp_cond2 ,jdbcType=NVARCHAR},
+		#{rsp_cond3 ,jdbcType=NVARCHAR},#{rsp_cond4 ,jdbcType=NVARCHAR},#{rsp_cond5 ,jdbcType=NVARCHAR} 
+		,#{rsp_pick},#{m_id2 ,jdbcType=NVARCHAR})
+	</insert>
+	
+	<select id="getPetInfo" parameterType="String"
+		resultType="com.dondog.dbapp.dto.PetDto">
+		SELECT * FROM PET WHERE M_ID=#{id}
+	</select>
+	
+	<select id="getpet_question" resultType="com.dondog.dbapp.dto.PetsitterQuestion">
+		SELECT * FROM PQ
+	</select>
+	
+	<insert id="PetsitterForm_Insert" 
+		parameterType="com.dondog.dbapp.dto.PetsitterFormDto"
+		useGeneratedKeys="true" keyProperty="up_num">
+		<selectKey keyProperty="up_num" resultType="String"
+			order="BEFORE">
+			SELECT PF_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		insert into PF 
+		(UP_NUM,M_ID,UP_MYSELF,UP_TITLE,UP_ANSWER,UP_PET,UP_EXP,UP_CONUM,UP_LSSUER)
+		VALUES ('PF'||#{up_num},#{m_id},#{up_myself},#{up_title},#{up_answer},#{up_pet},#{up_exp},#{up_conum},#{up_lssuer})
+	</insert>
+	
+	<select id="getsitterList" parameterType="Integer" 
+		resultType="com.dondog.dbapp.dto.petsitter_listDto">
+		<![CDATA[
+		SELECT * FROM SLIST_1 WHERE M_LEVEL='3'or M_LEVEL='4'		
+        AND (RONUM>=1*10-9
+		AND RONUM<=1*10)
+		]]>
+	</select>
+	
+	<select id="getsitterListCnt" resultType="Integer">
+		SELECT COUNT(*) FROM SLIST_1 WHERE M_LEVEL='3'or M_LEVEL='4'
+	</select>
+	
+	<select id="getquestList" parameterType="Integer" 
+		resultType="com.dondog.dbapp.dto.quest_listDto">
+		<![CDATA[
+		SELECT * FROM QLIST_1 WHERE RSP_STAT = 0
+		AND (RONUM>=1*10-9 AND RONUM<=1*10)
+		]]>
+	</select>
+	
+	<select id="getquestListCnt" resultType="Integer">
+		SELECT COUNT(*) FROM QLIST_1
+	</select>
+	
+	<select id ="getquestContents" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.ResPetsitterDto">
+	 		SELECT * FROM RES_PETSITTER WHERE RSP_NUM=#{pnum}
+	 </select>
+	 	
+	<select id="getMemberInfo_res" parameterType="String"
+		resultType="com.dondog.dbapp.dto.MemberDto">
+		SELECT * FROM MEMBER WHERE M_ID=#{mid}
+	</select>
+	
+	<select id="getpetInfo_res" parameterType="String"
+		resultType="com.dondog.dbapp.dto.PetDto">
+		SELECT * FROM PET WHERE P_PID=#{Pid}
+	</select>
+	
+	<update id="PetsitterRes_update" parameterType="com.dondog.dbapp.dto.ResPetsitterDto">
+	 	UPDATE RPS SET RSP_STAT= #{rsp_stat} ,RSP_PRICE= #{rsp_price} , M_ID2= #{m_id2}
+    	WHERE RSP_NUM = #{rsp_num}
+	 </update>
+	
+		<select id ="getsitterContents" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.MemberDto">
+	 		SELECT * FROM MEMBER WHERE M_ID=#{snum}
+	 </select>
+	
+	<select id ="getpetForm" parameterType="String"
+	 	resultType="com.dondog.dbapp.dto.PetsitterFormDto">
+	 		SELECT * FROM PETSITTER_FORM WHERE M_ID=#{mid}
+	 </select>
+	
+	<select id="getingList" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.ResPetsitterDto">
+		<![CDATA[
+		SELECT * FROM QLIST_1 WHERE M_ID =#{mid} AND NOT RSP_STAT = 2
+		AND (RONUM>=1*10-9
+		AND RONUM<=1*10)
+		]]>
+	</select>
+	
+	<update id="PetsitterRes_updatelast" parameterType="com.dondog.dbapp.dto.ResPetsitterDto">
+	 	UPDATE RPS SET RSP_STAT= #{rsp_stat}
+    	WHERE RSP_NUM = #{rsp_num}
+	 </update>
+	
+	<update id="PetsitterRes_updatecancle" parameterType="com.dondog.dbapp.dto.ResPetsitterDto">
+	 	UPDATE RPS SET RSP_STAT= #{rsp_stat} ,RSP_PRICE= #{rsp_price} , M_ID2= NULL
+    	WHERE RSP_NUM = #{rsp_num}
+	 </update>
+	 
+	 <update id="PetsitterRes_questcancle" parameterType="com.dondog.dbapp.dto.ResPetsitterDto">
+	 	UPDATE RPS SET RSP_STAT= #{rsp_stat} ,RSP_PRICE= #{rsp_price} 
+    	WHERE RSP_NUM = #{rsp_num}
+	 </update>
+	 
+	 <insert id="Petsitter_questList" parameterType="com.dondog.dbapp.dto.PetsitterQuestlistDto">
+ 		INSERT INTO PQL (MP_NUM, RSP_NUM , M_ID , M_ID2 )
+        VALUES( 'PQL'||TO_CHAR(SYSDATE ,'YYYYMMDD')||PQL_SEQ.NEXTVAL , #{rsp_num} ,#{m_id},#{m_id2})
+	 </insert>
+	 
+	 <select id="getquestListsuc" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.quest_listDto">
+		
+		SELECT * FROM QLIST where RSP_STAT = 2 and M_ID = #{m_id}
+		</select>
+		
+		<select id="Petsitter_ressurch" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.ResPetsitterDto">
+		
+		SELECT * FROM RES_PETSITTER where RSP_NUM = #{rsp_num}
+		
+		</select>
+		
+		<select id="getquestList2" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.PetsitterQuestlistDto">
+		
+		SELECT * FROM PETTER_QUESTLIST where M_ID = #{mid} AND MP_ETC = 0 AND MY_SUC = 0
+		</select>
+		
+		<select id="getmyquestContents" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.PetsitterQuestlistDto">
+		
+		SELECT * FROM PETTER_QUESTLIST where MP_NUM = #{mnum}
+		</select>
+	
+		<select id="getyouquestList2" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.PetsitterQuestlistDto">
+		
+		SELECT * FROM PETTER_QUESTLIST where M_ID2 = #{mid} AND MP_ETC = 0 AND PST_SUC = 0
+		</select>
+		
+	<update id="getmp_eat_up" parameterType="String">
+	 	update PETTER_QUESTLIST set MP_EAT = MP_EAT+ 1 where MP_NUM = #{mp_num}
+	 </update>
+	<update id="getmp_clean_up" parameterType="String">
+	 	update PETTER_QUESTLIST set MP_CLEAN = MP_CLEAN+ 1 where MP_NUM = #{mp_num}
+	 </update>
+	 <update id="getmp_walk_up" parameterType="String">
+	 	update PETTER_QUESTLIST set MP_WALK = MP_WALK+ 1 where MP_NUM = #{mp_num}
+	 </update>
+	 <update id="getmp_bath_up" parameterType="String">
+	 	update PETTER_QUESTLIST set MP_BATH = MP_BATH+ 1 where MP_NUM = #{mp_num}
+	 </update>
+	 <update id="getmp_medic_up" parameterType="String">
+	 	update PETTER_QUESTLIST set MP_MEDIC = MP_MEDIC+ 1 where MP_NUM = #{mp_num}
+	 </update>
+	 
+	  <update id="Petsitter_questList_cancle" parameterType="com.dondog.dbapp.dto.PetsitterQ_cancel">
+	 	update PETTER_QUESTLIST set MP_cancle = #{cr} , MP_ETC= #{mp_etc} where MP_NUM = #{mp_num}
+	 </update>
+	 
+	 	  <update id="petsittersucess" parameterType="String">
+	 	update PETTER_QUESTLIST set PST_SUC = 1 where MP_NUM = #{mp_num}
+	 </update>
+	 
+	 <update id="mysucess" parameterType="String">
+	 	update PETTER_QUESTLIST set MY_SUC = 1 where MP_NUM = #{mp_num}
+	 </update>
+	 
+		<select id="petsittersucess_chk" parameterType="String" 
+		resultType="Integer">
+		SELECT PST_SUC FROM PETTER_QUESTLIST where MP_NUM = #{mp_num}
+		</select>
+	
+		<select id="mysucess_chk" parameterType="String" 
+		resultType="Integer">
+		SELECT MY_SUC FROM PETTER_QUESTLIST where MP_NUM = #{mp_num}
+		</select>
+		
+		<update id="questcomp" parameterType="String">
+	 	update PETTER_QUESTLIST set MP_ETC = 1 where MP_NUM = #{mp_num}
+		 </update>
+		 
+		 <update id="res_comp" parameterType="String">
+	 	update RPS set RSP_STAT = 4 where RSP_NUM = #{rsp_num}
+		 </update>
+		 
+		<select id="pst_res_list" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.ResPetsitterDto">
+		<![CDATA[
+		SELECT * FROM QLIST_1 WHERE M_ID =#{mid} AND NOT RSP_STAT > 4
+		]]>
+	</select>
+	
+	<select id="pst_come_list" parameterType="String" 
+		resultType="com.dondog.dbapp.dto.ResPetsitterDto">
+		<![CDATA[
+		SELECT * FROM QLIST_2 WHERE M_ID2 = #{mid} AND RSP_STAT < 1
+		]]>
+	</select>
+	
+	<update id="res_update" parameterType="com.dondog.dbapp.dto.ResPetsitterDto">
+		UPDATE RPS SET 
+		P_PID = #{p_pid}, M_ID = #{m_id}, HP_NUM = #{hp_num  ,jdbcType=NVARCHAR}, CA_NUM = #{ca_num ,jdbcType=NVARCHAR}, RSP_IN = #{rsp_in},
+		RSP_OUT = #{rsp_out}, RSP_ETC= #{rsp_etc}, RSP_CONTENTS = #{rsp_contents}, RSP_LIC = #{rsp_lic}, RSP_COND1 = #{rsp_cond1 ,jdbcType=NVARCHAR},
+		RSP_COND2 = #{rsp_cond2 ,jdbcType=NVARCHAR}, RSP_COND3 = #{rsp_cond3 ,jdbcType=NVARCHAR}, 
+		RSP_COND4 = #{rsp_cond4 ,jdbcType=NVARCHAR}, RSP_COND5 = #{rsp_cond5 ,jdbcType=NVARCHAR}, 
+		RSP_PICK = #{rsp_pick} WHERE RSP_NUM = #{rsp_num}
+	 </update>
+	
+</mapper>
+
+
+
+
